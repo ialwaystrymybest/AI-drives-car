@@ -1,0 +1,4 @@
+pygame>=2.1.0
+neat-python>=0.92
+numpy>=1.21.0
+scipy>=1.7.0

@@ -1,10 +1,8 @@
-# ============================================================
 # run_best.py — Watch the best saved genome drive the road
 # Loads best_genome.pkl (created by pressing S during training
 # or automatically when training finishes) and replays it.
 #
 # Usage:   python run_best.py
-# ============================================================
 
 import os
 import pickle

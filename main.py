@@ -1,14 +1,12 @@
-# ============================================================
-# main.py — Entry point: sets up NEAT, runs the pygame loop,
+# main.py — sets up NEAT, runs the pygame loop,
 # evolves a population of self-driving cars generation by
-# generation.  Watch the training live!
-#
+# generation.
+
 # Controls:
 #   SPACE      Pause / resume
 #   UP / DOWN  Change simulation speed (1x → 2x → 5x → 10x)
 #   S          Save the best genome to best_genome.pkl
 #   ESC        Quit
-# ============================================================
 
 import os
 import sys

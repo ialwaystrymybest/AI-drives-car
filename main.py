@@ -18,7 +18,7 @@ from road import Road
 from car import Car
 from visualizer import draw_panel, draw_road_overlay
 
-# ---- Global state shared across generations ----
+#Global state shared across generations
 screen = None
 clock = None
 generation = 0
@@ -30,11 +30,10 @@ quit_requested = False
 _cached_road = None  # Built once and reused so generations start instantly without lag
 
 
-# ==============================================================
 # This function is called by neat-python once per generation.
 # It creates one car + one neural network per genome, then runs
 # the pygame simulation until all cars die or time runs out.
-# ==============================================================
+
 def eval_genomes(genomes, config):
     global generation, best_fitness_ever, sim_speed, speed_index, quit_requested, _cached_road
 
@@ -65,9 +64,9 @@ def eval_genomes(genomes, config):
     frame = 0
     paused = False
 
-    # ----------------------------------------------------------
+
     # Main simulation loop for this generation
-    # ----------------------------------------------------------
+
     while frame < MAX_FRAMES_PER_GEN:
         # --- Handle keyboard and window events ---
         for event in pygame.event.get():
@@ -141,9 +140,7 @@ def eval_genomes(genomes, config):
             best_fitness_ever = cars[i].fitness
 
 
-# ==============================================================
 # Draw one frame: road, cars, top panel, overlay
-# ==============================================================
 def _draw_frame(screen, road, cars, networks, genome_list, config, frame, total_cars):
     global best_fitness_ever
 
@@ -240,9 +237,7 @@ def _draw_frame(screen, road, cars, networks, genome_list, config, frame, total_
     pygame.display.flip()
 
 
-# ==============================================================
 # Save the genome with the highest fitness to a pickle file
-# ==============================================================
 def _save_best(genome_list, cars):
     best_i = 0
     for i in range(len(cars)):
@@ -254,9 +249,7 @@ def _save_best(genome_list, cars):
     print(f"[Saved] best genome to {path}  (fitness = {cars[best_i].fitness:.1f})")
 
 
-# ==============================================================
 # Entry point
-# ==============================================================
 def main():
     global screen, clock
 

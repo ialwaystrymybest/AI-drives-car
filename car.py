@@ -1,8 +1,6 @@
-# ============================================================
 # car.py — The Car class
 # Each car has position, angle, speed, 8 distance sensors,
 # and a fitness score based on how far it drives along the road.
-# ============================================================
 
 import math
 import pygame
@@ -39,10 +37,8 @@ class Car:
         # Neural network outputs (saved for the visualizer)
         self.current_outputs = [0.0, 0.0, 0.0, 0.0]
 
-    # ==============================================================
     # Cast all 8 sensor rays and find how far each one reaches
     # before leaving the road.  Returns a list of 8 floats (0-1).
-    # ==============================================================
     def cast_sensors(self, road):
         self.sensor_distances = []
         self.sensor_endpoints = []
@@ -116,10 +112,10 @@ class Car:
         self.x += math.sin(rad) * self.speed
         self.y -= math.cos(rad) * self.speed
 
-    # ==============================================================
+
     # Check if this car should be eliminated (off-road, stuck, etc.)
     # and update its fitness score.
-    # ==============================================================
+
     def check_alive(self, road, frame):
         if not self.alive:
             return
@@ -150,9 +146,9 @@ class Car:
         self.fitness = road.cumulative_dist[self.max_road_index]
         self.fitness += self.speed * SPEED_BONUS_WEIGHT
 
-    # ==============================================================
+
     # Draw the car on screen (rotated rectangle + optional sensors)
-    # ==============================================================
+
     def draw(self, screen, camera_x, camera_y, is_best=False, show_sensors=False):
         if not self.alive and not is_best:
             return  # Don't draw dead non-best cars

@@ -1,8 +1,6 @@
-# ============================================================
 # config_variables.py
 # All tweakable numbers in one place so you can experiment easily.
 # Change any value here and re-run main.py to see the effect.
-# ============================================================
 
 # --- Screen and Display ---
 SCREEN_WIDTH = 1400          # Total window width in pixels

@@ -1,9 +1,7 @@
-# ============================================================
 # road.py — Procedural road generation
 # Creates a smooth winding road using random control points
 # and scipy CubicSpline. Also handles collision checking via
 # a precomputed grid for O(1) "is this point on the road?" lookups.
-# ============================================================
 
 import math
 import numpy as np
@@ -19,10 +17,8 @@ class Road:
     """Holds the road center-line, boundaries, and provides collision checks."""
 
     def __init__(self, seed=42):
-        # ----------------------------------------------------------
         # Step 1: Generate random control points for the road shape
         # The road starts at the bottom and goes upward (decreasing y).
-        # ----------------------------------------------------------
         rng = np.random.RandomState(seed)
 
         num_pts = ROAD_CONTROL_POINTS
@@ -36,10 +32,8 @@ class Road:
             ctrl_x.append(float(new_x))
             ctrl_y.append(float(new_y))
 
-        # ----------------------------------------------------------
         # Step 2: Smooth the control points with CubicSpline
         # We parameterize by t = 0, 1, 2, … and get smooth x(t), y(t).
-        # ----------------------------------------------------------
         t_ctrl = np.arange(num_pts, dtype=float)
         cs_x = CubicSpline(t_ctrl, ctrl_x)
         cs_y = CubicSpline(t_ctrl, ctrl_y)
@@ -53,11 +47,9 @@ class Road:
         self.half_width = ROAD_WIDTH / 2.0
         self.half_width_sq = self.half_width ** 2
 
-        # ----------------------------------------------------------
         # Step 3: Compute tangent and normal at each center-line point
         # The normal is perpendicular to the road direction so we can
         # offset left and right to build road boundaries.
-        # ----------------------------------------------------------
         tangent_x = np.gradient(self.center_x)
         tangent_y = np.gradient(self.center_y)
         tangent_len = np.sqrt(tangent_x ** 2 + tangent_y ** 2)
@@ -67,26 +59,23 @@ class Road:
         self.normal_x = -tangent_y / tangent_len
         self.normal_y = tangent_x / tangent_len
 
-        # ----------------------------------------------------------
+
         # Step 4: Build left and right road boundaries
-        # ----------------------------------------------------------
         self.left_x = self.center_x - self.normal_x * self.half_width
         self.left_y = self.center_y - self.normal_y * self.half_width
         self.right_x = self.center_x + self.normal_x * self.half_width
         self.right_y = self.center_y + self.normal_y * self.half_width
 
-        # ----------------------------------------------------------
+
         # Step 5: Cumulative distance along the center-line (for fitness)
-        # ----------------------------------------------------------
         dx = np.diff(self.center_x)
         dy = np.diff(self.center_y)
         segment_lengths = np.sqrt(dx ** 2 + dy ** 2)
         self.cumulative_dist = np.zeros(self.num_points)
         self.cumulative_dist[1:] = np.cumsum(segment_lengths)
 
-        # ----------------------------------------------------------
+
         # Step 6: Starting position and angle for the cars
-        # ----------------------------------------------------------
         start_i = 10  # A few points in so the car is clearly on the road
         self.start_x = float(self.center_x[start_i])
         self.start_y = float(self.center_y[start_i])
@@ -96,15 +85,12 @@ class Road:
         sdy = self.center_y[start_i + 1] - self.center_y[start_i - 1]
         self.start_angle = math.degrees(math.atan2(sdx, -sdy))
 
-        # ----------------------------------------------------------
         # Step 7: Build a grid for fast "is on road?" checks
         # Each cell is True if it is inside the road surface.
-        # ----------------------------------------------------------
         self._build_road_grid()
 
-        # ----------------------------------------------------------
+
         # Step 8: Generate decorative trees beside the road
-        # ----------------------------------------------------------
         self.trees = []
         tree_rng = np.random.RandomState((seed + 7) if seed else None)
         for i in range(0, self.num_points, 20):
@@ -116,11 +102,9 @@ class Road:
                     radius = tree_rng.randint(12, 28)
                     self.trees.append((float(tx), float(ty), int(radius)))
 
-    # ==============================================================
     # Grid builder — marks every cell that is inside the road.
     # Uses a precomputed circle mask stamped onto the grid with fast
     # array slices instead of 1+ million slow nested Python loop steps.
-    # ==============================================================
     def _build_road_grid(self):
         all_x = np.concatenate([self.left_x, self.right_x])
         all_y = np.concatenate([self.left_y, self.right_y])
@@ -162,9 +146,7 @@ class Road:
 
             self._grid[g_y0:g_y1, g_x0:g_x1] |= circle_mask[m_y0:m_y1, m_x0:m_x1]
 
-    # ==============================================================
     # Check if a world-coordinate point is on the road  (O(1) lookup)
-    # ==============================================================
     def is_on_road(self, x, y):
         gx = int((x - self._grid_x0) / GRID_CELL_SIZE)
         gy = int((y - self._grid_y0) / GRID_CELL_SIZE)
@@ -172,10 +154,9 @@ class Road:
             return bool(self._grid[gy, gx])
         return False
 
-    # ==============================================================
+
     # Find the index of the nearest center-line point to (x, y).
     # hint_index speeds up the search by only looking nearby.
-    # ==============================================================
     def get_nearest_index(self, x, y, hint_index=0):
         s = max(0, hint_index - 30)
         e = min(self.num_points, hint_index + 60)
@@ -184,9 +165,7 @@ class Road:
         dist_sq = dx * dx + dy * dy
         return int(s + np.argmin(dist_sq))
 
-    # ==============================================================
     # Draw the visible portion of the road
-    # ==============================================================
     def draw(self, screen, camera_x, camera_y):
         # Find which center-line points are currently on-screen
         screen_y = self.center_y - camera_y + TOP_PANEL_HEIGHT
